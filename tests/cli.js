@@ -42,7 +42,7 @@ describe('CLI', () => {
 	[[], ['deploy']].forEach(args => {
 		it(`Should print the usage and exit 1 for the arguments [${args}]`, async () => {
 			assert.strictEqual(await run(args, output), 1);
-			sinon.assert.calledOnceWithExactly(output.stderr.write, 'Usage: oidc-deploy <env|publish-deployed> [--env beta|qa|prod]\n');
+			sinon.assert.calledOnceWithExactly(output.stderr.write, 'Usage: oidc-deploy <env|publish-deployed [--env beta|qa|prod]>\n');
 			sinon.assert.notCalled(output.stdout.write);
 		});
 	});

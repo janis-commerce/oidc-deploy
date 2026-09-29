@@ -58,7 +58,7 @@ describe('Env', () => {
 			assert.strictEqual(fs.readFileSync(tokenFile, 'utf8'), OIDC_TOKEN);
 			assert.strictEqual(fs.statSync(tokenFile).mode & 0o777, 0o600);
 
-			assert.strictEqual(getStderr(), `oidc-deploy: Deploying to beta with the OIDC role ${ROLE_ARN}\n`);
+			assert.strictEqual(getStderr(), `oidc-deploy: Deploying with the OIDC role ${ROLE_ARN}\n`);
 			assert(!getStdout().includes(OIDC_TOKEN));
 		});
 
@@ -97,62 +97,13 @@ describe('Env', () => {
 		});
 	});
 
-	context('Without the OIDC role', () => {
+	it('Should fail when AWS_DEPLOY_ROLE_ARN is not published in the deployment environment', () => {
 
-		it('Should print the static keys references in prod, never their values', () => {
+		setEnv({ BITBUCKET_STEP_OIDC_TOKEN: OIDC_TOKEN });
 
-			setEnv({
-				BITBUCKET_DEPLOYMENT_ENVIRONMENT: 'production',
-				AWS_ACCESS_KEY: 'AKIAFAKEACCESSKEY',
-				AWS_SECRET_KEY: 'fake-secret-key-value'
-			});
-
-			assert.strictEqual(env([], output), 0);
-
-			assert.strictEqual(getStdout(), 'export AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY"\nexport AWS_SECRET_ACCESS_KEY="$AWS_SECRET_KEY"\n');
-			assert(!getStdout().includes('AKIAFAKEACCESSKEY'));
-			assert(!getStdout().includes('fake-secret-key-value'));
-			assert(!getStderr().includes('fake-secret-key-value'));
-			assert(getStderr().includes('WARNING Deploying to prod with the static keys'));
-		});
-
-		[
-			{ AWS_SECRET_KEY: 'fake-secret-key-value' },
-			{ AWS_ACCESS_KEY: 'AKIAFAKEACCESSKEY' }
-		].forEach(keys => {
-			it(`Should fail in prod when only ${Object.keys(keys)} is set`, () => {
-
-				setEnv({ BITBUCKET_DEPLOYMENT_ENVIRONMENT: 'production', ...keys });
-
-				assert.strictEqual(env([], output), 1);
-				assert.strictEqual(getStderr(),
-					'oidc-deploy: AWS_DEPLOY_ROLE_ARN, AWS_ACCESS_KEY and AWS_SECRET_KEY not found. There are no credentials to deploy\n');
-				sinon.assert.notCalled(output.stdout.write);
-			});
-		});
-
-		['test', 'staging'].forEach(deploymentEnvironment => {
-			it(`Should fail in the ${deploymentEnvironment} deployment environment even with static keys`, () => {
-
-				setEnv({
-					BITBUCKET_DEPLOYMENT_ENVIRONMENT: deploymentEnvironment,
-					AWS_ACCESS_KEY: 'AKIAFAKEACCESSKEY',
-					AWS_SECRET_KEY: 'fake-secret-key-value'
-				});
-
-				assert.strictEqual(env([], output), 1);
-				assert.strictEqual(getStderr(), 'oidc-deploy: AWS_DEPLOY_ROLE_ARN is not published in this deployment environment\n');
-				sinon.assert.notCalled(output.stdout.write);
-			});
-		});
-	});
-
-	it('Should fail when the environment cannot be resolved', () => {
-
-		setEnv({});
-
-		assert.strictEqual(env(['--env', 'dev'], output), 1);
-		assert.strictEqual(getStderr(), 'oidc-deploy: Invalid --env dev: use beta, qa or prod\n');
+		assert.strictEqual(env([], output), 1);
+		assert.strictEqual(getStderr(), 'oidc-deploy: AWS_DEPLOY_ROLE_ARN is not published in this deployment environment\n');
 		sinon.assert.notCalled(output.stdout.write);
+		assert.deepStrictEqual(fs.readdirSync(tmpDir), []);
 	});
 });
