@@ -8,6 +8,8 @@ CLI for the Bitbucket Pipelines that deploy with their own script instead of the
 
 It replaces the shell block that assumes the OIDC deploy role in every deploy step, and publishes the `serviceDeployed` event like the pipe does.
 
+Requires Node.js 20 or later in the image of the step.
+
 ## Usage
 
 ```yaml
