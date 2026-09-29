@@ -1,6 +1,6 @@
 {
   "name": "@janiscommerce/oidc-deploy",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Assume the Janis OIDC deploy role and report the deploy in Bitbucket Pipelines that deploy with their own script",
   "bin": {
     "oidc-deploy": "bin/oidc-deploy.js"
