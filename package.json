@@ -1,0 +1,46 @@
+{
+  "name": "@janiscommerce/oidc-deploy",
+  "version": "0.0.0",
+  "description": "Assume the Janis OIDC deploy role and report the deploy in Bitbucket Pipelines that deploy with their own script",
+  "bin": {
+    "oidc-deploy": "bin/oidc-deploy.js"
+  },
+  "scripts": {
+    "test": "export TEST_ENV=true; mocha --exit -R nyan --recursive tests/",
+    "watch-test": "export TEST_ENV=true; mocha --exit -R nyan -w --recursive tests/",
+    "coverage": "nyc npm test",
+    "coverage-ci": "nyc --reporter=lcov --reporter=text-summary mocha --exit --recursive tests/",
+    "lint": "eslint bin/ lib/ tests/",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/janis-commerce/oidc-deploy.git"
+  },
+  "author": "Janis",
+  "license": "ISC",
+  "homepage": "https://github.com/janis-commerce/oidc-deploy.git#readme",
+  "devDependencies": {
+    "aws-sdk-client-mock": "^4.1.0",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "husky": "^8.0.3",
+    "mocha": "^10.7.3",
+    "nyc": "^17.0.0",
+    "sinon": "^18.0.0"
+  },
+  "files": [
+    "bin/",
+    "lib/"
+  ],
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sns": "^3.859.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

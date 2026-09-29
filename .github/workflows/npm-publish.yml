@@ -1,0 +1,16 @@
+name: NPM Publish
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  publish:
+    uses: janis-commerce/.github/.github/workflows/npm-publish.yml@master
+    with:
+      run-lint: true
+      slack-username: OIDC Deploy
+    secrets:
+      npm_token: ${{ secrets.npm_token }}
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
