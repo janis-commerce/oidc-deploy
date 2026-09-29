@@ -42,6 +42,8 @@ Publishes the `serviceDeployed` event to the `serviceDeployed` SNS topic of the 
 
 It is best effort: any error, such as a missing account id or a publish failure, is a warning and it always exits with code `0`.
 
+**Publish once per environment, only when every step deploys with the role.** On the first `oidc` event of a repository, Devops removes the static keys of its deployment environment. If the environment has several steps (for example a stage), call `publish-deployed` only in the last one, and only once every step of that environment assumes the role: a step that still uses the static keys breaks on its next deploy.
+
 ## Variables
 
 | Variable | Command | Description |
