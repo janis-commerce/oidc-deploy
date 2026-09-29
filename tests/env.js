@@ -65,18 +65,20 @@ describe('Env', () => {
 		it('Should cut the repo slug to 50 characters and default the build number to 0', () => {
 
 			setEnv({
+				BITBUCKET_DEPLOYMENT_ENVIRONMENT: 'staging',
 				AWS_DEPLOY_ROLE_ARN: ROLE_ARN,
 				BITBUCKET_STEP_OIDC_TOKEN: OIDC_TOKEN,
 				BITBUCKET_REPO_SLUG: 'a'.repeat(60)
 			});
 
-			assert.strictEqual(env(['--env', 'qa'], output), 0);
+			assert.strictEqual(env([], output), 0);
 			assert(getStdout().includes(`export AWS_ROLE_SESSION_NAME='${'a'.repeat(50)}-0'\n`));
 		});
 
 		it('Should escape the single quotes of the values', () => {
 
 			setEnv({
+				BITBUCKET_DEPLOYMENT_ENVIRONMENT: 'test',
 				AWS_DEPLOY_ROLE_ARN: 'arn:it\'s',
 				BITBUCKET_STEP_OIDC_TOKEN: OIDC_TOKEN,
 				BITBUCKET_REPO_SLUG: 'janis-catalog-service'
@@ -97,9 +99,20 @@ describe('Env', () => {
 		});
 	});
 
+	it('Should fail when the step has no deployment', () => {
+
+		setEnv({ AWS_DEPLOY_ROLE_ARN: ROLE_ARN, BITBUCKET_STEP_OIDC_TOKEN: OIDC_TOKEN });
+
+		assert.strictEqual(env([], output), 1);
+		assert.strictEqual(getStderr(),
+			'oidc-deploy: The step has no deployment: add deployment: to the deploy step so Bitbucket injects AWS_DEPLOY_ROLE_ARN\n');
+		sinon.assert.notCalled(output.stdout.write);
+		assert.deepStrictEqual(fs.readdirSync(tmpDir), []);
+	});
+
 	it('Should fail when AWS_DEPLOY_ROLE_ARN is not published in the deployment environment', () => {
 
-		setEnv({ BITBUCKET_STEP_OIDC_TOKEN: OIDC_TOKEN });
+		setEnv({ BITBUCKET_DEPLOYMENT_ENVIRONMENT: 'test', BITBUCKET_STEP_OIDC_TOKEN: OIDC_TOKEN });
 
 		assert.strictEqual(env([], output), 1);
 		assert.strictEqual(getStderr(), 'oidc-deploy: AWS_DEPLOY_ROLE_ARN is not published in this deployment environment\n');

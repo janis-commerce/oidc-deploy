@@ -33,6 +33,7 @@ Prints only `export` lines to stdout, to be evaluated by the step. Every human m
 Writes the step OIDC token to a file (mode `0600`) and exports `AWS_ROLE_ARN`, `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_SESSION_NAME`. Serverless, the AWS SDK and the AWS CLI assume the role by themselves (`AssumeRoleWithWebIdentity`).
 
 It exits with code `1`, and the step fails, when:
+- The step has no `deployment:`, so Bitbucket does not inject `AWS_DEPLOY_ROLE_ARN`.
 - `AWS_DEPLOY_ROLE_ARN` is not published in the deployment environment.
 - The step has no `oidc: true`.
 
@@ -48,7 +49,7 @@ It is best effort: any error, such as a missing account id or a publish failure,
 
 | Variable | Command | Description |
 |---|---|---|
-| `BITBUCKET_DEPLOYMENT_ENVIRONMENT` | `publish-deployed` | `test` → beta, `staging` → qa, `production` → prod |
+| `BITBUCKET_DEPLOYMENT_ENVIRONMENT` | both | `test` → beta, `staging` → qa, `production` → prod |
 | `AWS_DEPLOY_ROLE_ARN` | both | The OIDC deploy role of the deployment environment |
 | `BITBUCKET_STEP_OIDC_TOKEN` | `env` | Set by Bitbucket with `oidc: true` |
 | `BITBUCKET_REPO_SLUG`, `BITBUCKET_BUILD_NUMBER` | both | Role session name and event data |
