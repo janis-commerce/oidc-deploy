@@ -143,7 +143,7 @@ Cada service con `sls-helper-plugin-janis` 11 toma, al deployar, la última vers
 - **La cuenta de trace sale del modelo `Account`** (`name: 'Trace'`), igual que `PublishWorkspaceVariables`.
 - **Attributes en los dos publishers.** El filtro de la cola usa el attribute `repository`. La layer deploya con oidc-deploy, así que oidc-deploy sale antes que la layer.
 - **La branch del plugin parte de `JCN-562-runtime-parameter`**: usa el parámetro `runtime`.
-- **El plugin solo lee `JANIS_TRACE_LAYERS`.** ci-cd sigue exportando `JANIS_TRACE_EXTENSION_VERSION` y `TRACE_ACCOUNT_ID` para el plugin ≤10 y las versiones anteriores de 11. El release del plugin va después de que el mapa exista en prod: antes, un service que actualice el plugin deployaría sin layer trace.
+- **El plugin solo lee `JANIS_TRACE_LAYERS`.** ci-cd sigue exportando `JANIS_TRACE_EXTENSION_VERSION` y `TRACE_ACCOUNT_ID` para el plugin ≤10 y las versiones anteriores de 11. El release del plugin va después de ci-cd v3, devops y la layer en los tres ambientes, con el mapa en cada uno: antes, un service que actualice el plugin deployaría sin layer trace.
 - **El plugin resuelve la layer en el deploy con variables de Serverless.** Un service puede pisar `runtime` por stage con `params.<stage>.runtime`, y `provider.runtime` queda `${param:runtime}`. La layer se declara como `${self:custom.janisTraceLayers.${param:runtime}}`, así cada stage toma la layer de su runtime real. El plugin carga el mapa en `custom.janisTraceLayers` con una forma que resuelva claves con punto (`nodejs26.x`). Sin parámetro `runtime`, usa el ARN de `nodejs22.x` directo. Además, valida antes el runtime declarado en `janis.base` contra el mapa, para dar un error claro en el caso común.
 
 ## Abiertas

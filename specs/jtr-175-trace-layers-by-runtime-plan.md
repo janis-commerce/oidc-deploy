@@ -51,9 +51,8 @@ Un batch por repo, en serie. El orden sigue el orden de salida: primero lo que n
 
 ## Salida (después del desarrollo)
 
-1. Release de oidc-deploy (minor).
-2. Deploy de devops a beta: rol remoto y después el consumer.
-3. Release de ci-cd v3.
-4. Deploy de la layer a beta. Validación en beta con un service de prueba que use el plugin desde la branch.
-5. Devops y layer a QA y prod. Verificar `JANIS_TRACE_LAYERS` en cada ambiente.
-6. Release del plugin, después de JCN-562.
+1. Release de oidc-deploy (minor) y de ci-cd v3.
+2. devops en beta, QA y prod: rol remoto y después el consumer. Sin `trace-node20` no tiene efecto.
+3. Layer a beta. Validación en beta con un service de prueba que use el plugin desde la branch.
+4. Layer a QA y prod. Verificar `JANIS_TRACE_LAYERS` en cada ambiente.
+5. Release del plugin, después de JCN-562. Requiere los pasos 1 a 4 en los tres ambientes: antes, un service que actualice el plugin deployaría sin layer trace.
