@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-12
+
+### Added
+- `publish-deployed` sends `service` and `repository` as message attributes of `serviceDeployed`, so subscriptions can filter by them
+
 ## [1.0.0] - 2026-09-29
 
 ### Added
