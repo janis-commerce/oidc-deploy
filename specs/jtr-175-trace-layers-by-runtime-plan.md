@@ -6,16 +6,16 @@ Un batch por repo, en serie. El orden sigue el orden de salida: primero lo que n
 
 ## 1. oidc-deploy
 
-- [ ] `lib/publish-deployed.js`: sumar `service` y `repository` a `MessageAttributes`, solo si no están vacíos.
-- [ ] `tests/publish-deployed.js`: casos con y sin `SERVICE_CODE` y `BITBUCKET_REPO_SLUG`.
-- [ ] `README.md`: sección `publish-deployed`.
+- [x] `lib/publish-deployed.js`: sumar `service` y `repository` a `MessageAttributes`, solo si no están vacíos.
+- [x] `tests/publish-deployed.js`: casos con y sin `SERVICE_CODE` y `BITBUCKET_REPO_SLUG`.
+- [x] `README.md`: sección `publish-deployed`.
 - Verificación: `npm test` y `npm run lint`.
 
 ## 2. janis-ci-cd-service
 
-- [ ] `pipe/pipe.sh`: `unset JANIS_TRACE_LAYERS` con `USES_TRACE_LAYER=false`. Debug: informar si está seteada, sin el valor.
-- [ ] `pipe/pipe-steps/publish-service-deployed.sh`: attributes `service` y `repository`, con el mismo patrón condicional que `architecture` y `runtime`.
-- [ ] `README.md`: fila de `JANIS_TRACE_LAYERS`. `docs/internal/` donde se describe el evento.
+- [x] `pipe/pipe.sh`: `unset JANIS_TRACE_LAYERS` con `USES_TRACE_LAYER=false`. Debug: informar si está seteada, sin el valor.
+- [x] `pipe/pipe-steps/publish-service-deployed.sh`: attributes `service` y `repository`, con el mismo patrón condicional que `architecture` y `runtime`.
+- [x] `README.md`: fila de `JANIS_TRACE_LAYERS`. `docs/internal/` donde se describe el evento.
 - Verificación: `bash -n` y correr el bloque `jq` de attributes con y sin valores.
 
 ## 3. janis-devops-service
@@ -31,7 +31,7 @@ Un batch por repo, en serie. El orden sigue el orden de salida: primero lo que n
 
 ## 4. sls-helper-plugin-janis
 
-- [ ] `lib/utils/trace-layer.js`: leer y validar `JANIS_TRACE_LAYERS`. Fallback a la construcción actual.
+- [ ] `lib/utils/trace-layer.js`: leer y validar `JANIS_TRACE_LAYERS`. Sin fallback a `JANIS_TRACE_EXTENSION_VERSION` ni `TRACE_ACCOUNT_ID`.
 - [ ] `lib/service/base.js`: `custom.janisTraceLayers`, layer con `${param:runtime}` o con el ARN de `nodejs22.x`, validación del runtime declarado.
 - [ ] `lib/utils/parse-function-layers.js`: `skipTraceLayer` con el ARN nuevo.
 - [ ] Tests en `tests/unit/hooks/base.js` y `tests/unit/hooks/api-base.js`.
@@ -53,6 +53,7 @@ Un batch por repo, en serie. El orden sigue el orden de salida: primero lo que n
 
 1. Release de oidc-deploy (minor).
 2. Deploy de devops a beta: rol remoto y después el consumer.
-3. Release del plugin, después de JCN-562.
-4. Release de ci-cd v3.
-5. Deploy de la layer a beta y validación en beta.
+3. Release de ci-cd v3.
+4. Deploy de la layer a beta. Validación en beta con un service de prueba que use el plugin desde la branch.
+5. Devops y layer a QA y prod. Verificar `JANIS_TRACE_LAYERS` en cada ambiente.
+6. Release del plugin, después de JCN-562.
