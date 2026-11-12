@@ -20,33 +20,33 @@ Un batch por repo, en serie. El orden sigue el orden de salida: primero lo que n
 
 ## 3. janis-devops-service
 
-- [ ] `infra/cross-account-roles/devops-service-remote-role.yml`: `lambda:ListLayers`.
-- [ ] `src/lib/aws/lambda.js`: `listLayers` con paginación por `Marker`.
-- [ ] `src/helpers/trace-layers.js`: cuenta `Trace` desde `Account`, assume role, filtro `trace-node`, mapa por runtime, conflicto de runtime, merge de `JANIS_TRACE_LAYERS` como string JSON en `/shared/<env>/ci-cd`.
-- [ ] Cola `syncTraceLayers` (`serverless/queues/service/`) con `filterPolicy: { repository: ['janis-trace-lambda-layer'] }` y su consumer.
-- [ ] Endpoint de resincronización, con su serverless y su schema.
-- [ ] Tests: lib, helper, consumer, endpoint y hooks de la cola.
-- [ ] `docs/internal/trace-layers.md`, `INDEX.md` y `logging-core-shielding.md`.
+- [x] `infra/cross-account-roles/devops-service-remote-role.yml`: `lambda:ListLayers`.
+- [x] `src/lib/aws/lambda.js`: `listLayers` con paginación por `Marker`.
+- [x] `src/helpers/trace-layers.js`: cuenta `Trace` desde `Account`, assume role, filtro `trace-node`, mapa por runtime, conflicto de runtime, merge de `JANIS_TRACE_LAYERS` como string JSON en `/shared/<env>/ci-cd`.
+- [x] Cola `syncTraceLayers` (`serverless/queues/service/`) con `filterPolicy: { repository: ['janis-trace-lambda-layer'] }` y su consumer.
+- [x] Endpoint de resincronización, con su serverless y su schema.
+- [x] Tests: lib, helper, consumer, endpoint y hooks de la cola.
+- [x] `docs/internal/trace-layers.md`, `INDEX.md` y `logging-core-shielding.md`.
 - Verificación: `npm test` y `npm run lint`.
 
 ## 4. sls-helper-plugin-janis
 
-- [ ] `lib/utils/trace-layer.js`: leer y validar `JANIS_TRACE_LAYERS`. Sin fallback a `JANIS_TRACE_EXTENSION_VERSION` ni `TRACE_ACCOUNT_ID`.
-- [ ] `lib/service/base.js`: `custom.janisTraceLayers`, layer con `${param:runtime}` o con el ARN de `nodejs22.x`, validación del runtime declarado.
-- [ ] `lib/utils/parse-function-layers.js`: `skipTraceLayer` con el ARN nuevo.
-- [ ] Tests en `tests/unit/hooks/base.js` y `tests/unit/hooks/api-base.js`.
-- [ ] Verificar con `sls print` en un service de prueba que `${self:custom.janisTraceLayers.${param:runtime}}` resuelve una clave con punto.
-- [ ] `README.md`: sección "Trace Lambda Layer".
+- [x] `lib/utils/trace-layer.js`: leer y validar `JANIS_TRACE_LAYERS`. Sin fallback a `JANIS_TRACE_EXTENSION_VERSION` ni `TRACE_ACCOUNT_ID`.
+- [x] `lib/service/base.js`: `custom.janisTraceLayers`, layer con `${param:runtime}` o con el ARN de `nodejs22.x`, validación del runtime declarado.
+- [x] `lib/utils/parse-function-layers.js`: `skipTraceLayer` con el ARN nuevo.
+- [x] Tests en `tests/unit/hooks/base.js` y `tests/unit/hooks/api-base.js`.
+- [x] Verificar con `sls print` en un service de prueba que `${self:custom.janisTraceLayers.${param:runtime}}` resuelve una clave con punto.
+- [x] `README.md`: sección "Trace Lambda Layer".
 - Verificación: `npm test` y `npm run lint`.
 
 ## 5. janis-trace-lambda-layer
 
-- [ ] `lines/node18/` y `lines/node20/`: `package.json` y lock. `overrides` de `@aws-sdk` por debajo de 3.970 en la línea Node 18.
-- [ ] `scripts/build-layers.sh`: arma `build/trace/` y `build/trace-node20/`.
-- [ ] `serverless.yml`: layers `trace` y `traceNode20`.
-- [ ] `package.json`, `.gitignore` y `bitbucket-pipelines.yml`.
-- [ ] Tests contra las dos líneas.
-- [ ] `README.md`.
+- [x] `lines/node18/` y `lines/node20/`: `package.json` y lock. `overrides` de `@aws-sdk` por debajo de 3.968 en la línea Node 18.
+- [x] `scripts/build-layers.sh`: arma `build/trace/` y `build/trace-node20/`.
+- [x] `serverless.yml`: layers `trace` y `traceNode20`.
+- [x] `package.json`, `.gitignore` y `bitbucket-pipelines.yml`.
+- [x] Tests contra las dos líneas.
+- [x] `README.md`.
 - Verificación: `npm test`, `npm run lint` y contenido de cada `build/`.
 
 ## Salida (después del desarrollo)
