@@ -66,7 +66,9 @@ describe('Publish deployed', () => {
 		assert.deepStrictEqual(input, {
 			TopicArn: `arn:aws:sns:us-east-1:${DEVOPS_ACCOUNT_ID}:serviceDeployed`,
 			MessageAttributes: {
-				authMethod: { DataType: 'String', StringValue: 'oidc' }
+				authMethod: { DataType: 'String', StringValue: 'oidc' },
+				service: { DataType: 'String', StringValue: 'catalog' },
+				repository: { DataType: 'String', StringValue: 'janis-catalog-service' }
 			}
 		});
 
@@ -107,7 +109,10 @@ describe('Publish deployed', () => {
 		const { TopicArn, Message, MessageAttributes } = getPublishInput();
 
 		assert.strictEqual(TopicArn, `arn:aws:sns:us-east-1:${DEVOPS_ACCOUNT_ID}:serviceDeployed`);
-		assert.deepStrictEqual(MessageAttributes, { authMethod: { DataType: 'String', StringValue: 'keys' } });
+		assert.deepStrictEqual(MessageAttributes, {
+			authMethod: { DataType: 'String', StringValue: 'keys' },
+			repository: { DataType: 'String', StringValue: 'janis-catalog-service' }
+		});
 
 		assert.deepStrictEqual(JSON.parse(Message), {
 			service: '',
@@ -120,6 +125,44 @@ describe('Publish deployed', () => {
 			authMethod: 'keys',
 			pipeVersion: `oidc-deploy@${version}`,
 			dateDeployed: '2026-09-29T15:30:00.000Z'
+		});
+	});
+
+	it('Should omit the service attribute when SERVICE_CODE is empty and still publish', async () => {
+
+		setEnv({ ...bitbucketVariables, SERVICE_CODE: '', BITBUCKET_DEPLOYMENT_ENVIRONMENT: 'test', DEVOPS_ACCOUNT_ID });
+
+		assert.strictEqual(await publishDeployed([], output), 0);
+
+		assert.strictEqual(snsMock.commandCalls(PublishCommand).length, 1);
+		assert.deepStrictEqual(getPublishInput().MessageAttributes, {
+			authMethod: { DataType: 'String', StringValue: 'keys' },
+			repository: { DataType: 'String', StringValue: 'janis-catalog-service' }
+		});
+	});
+
+	it('Should omit the repository attribute when BITBUCKET_REPO_SLUG is empty and still publish', async () => {
+
+		setEnv({ ...bitbucketVariables, BITBUCKET_REPO_SLUG: '', BITBUCKET_DEPLOYMENT_ENVIRONMENT: 'test', DEVOPS_ACCOUNT_ID });
+
+		assert.strictEqual(await publishDeployed([], output), 0);
+
+		assert.strictEqual(snsMock.commandCalls(PublishCommand).length, 1);
+		assert.deepStrictEqual(getPublishInput().MessageAttributes, {
+			authMethod: { DataType: 'String', StringValue: 'keys' },
+			service: { DataType: 'String', StringValue: 'catalog' }
+		});
+	});
+
+	it('Should send only the authMethod attribute when SERVICE_CODE and BITBUCKET_REPO_SLUG are empty', async () => {
+
+		setEnv({ BITBUCKET_DEPLOYMENT_ENVIRONMENT: 'test', DEVOPS_ACCOUNT_ID });
+
+		assert.strictEqual(await publishDeployed([], output), 0);
+
+		assert.strictEqual(snsMock.commandCalls(PublishCommand).length, 1);
+		assert.deepStrictEqual(getPublishInput().MessageAttributes, {
+			authMethod: { DataType: 'String', StringValue: 'keys' }
 		});
 	});
 
