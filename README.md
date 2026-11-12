@@ -39,7 +39,7 @@ It exits with code `1`, and the step fails, when:
 
 ## `publish-deployed`
 
-Publishes the `serviceDeployed` event to the `serviceDeployed` SNS topic of the Devops account (`us-east-1`), with the credentials of the step. The message has the same contract as the pipe, and the `authMethod` (`oidc` or `keys`) is also sent as a message attribute.
+Publishes the `serviceDeployed` event to the `serviceDeployed` SNS topic of the Devops account (`us-east-1`), with the credentials of the step. The message has the same contract as the pipe, and the `authMethod` (`oidc` or `keys`) is also sent as a message attribute. The `service` and `repository` are also sent as message attributes when they are not empty.
 
 It is best effort: any error, such as a missing account id or a publish failure, is a warning and it always exits with code `0`.
 
